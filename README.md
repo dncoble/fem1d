@@ -1,5 +1,7 @@
 # fem1d
-Python wrapper for FEM1D program from J.N. Reddy.
+Python wrapper for FEM1D program from J.N. Reddy. Use this to generate the problem data cards or alternatively solve straight from python. 
+
+I've tried to program this to the full functionality of FEM1D, but it has only been tested with Euler-Bernoulli beam problems.
 
 ## How to use
 
