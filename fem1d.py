@@ -150,10 +150,11 @@ class FEM1DProblemData():
     #         c = l[-1]
     #     self.vars['nod'] = nod
         
-    def __init__(self, nodes_per_element, template=None, **kwargs):
+    def __init__(self, nodes_per_element, print_sol=True, **kwargs):
         self.vars = kwargs
         self.card = ''
         self.local_nodes = nodes_per_element
+        self.print_sol = print_sol
         
         c = 1; nod = []
         for n in nodes_per_element:
@@ -249,7 +250,6 @@ class FEM1DProblemData():
         with open(filename, 'w') as f:
             f.write(self.card)
     
-    #returns an FEMSolution object
     def run(self):
         self.build_cards()
         self.save_card('tempcard.inp')
@@ -260,18 +260,33 @@ class FEM1DProblemData():
         # while(not os.path.exists('solved_card.txt')):
         #     pass
         with open('solved_card.txt', 'r') as f:
-            solved_card = f.read()
+            solution_card = f.read()
+        if(self.print_sol):
+            print(solution_card)
         os.remove('tempcard.inp')
         os.remove('solved_card.txt')
-        return FEMSolution(solved_card)
+        return solution_card
 
 '''
 Contains solution data and supports certain postprocessing operations
 '''
 class FEMSolution:
     
-    def __init__(self, solved_card):
-        self.solved_card = solved_card
+    def __init__(self, solution_card):
+        self.solution_card = solution_card
+        i = solution_card.index('Shear Force') + 94
+        l = np.fromstring(solution_card[i:-110])
+        n = [j.split(' ') for j in l.split('\n')]
+        m = []
+        for k in n:
+            r = []
+            for j in k:
+                if j != '':
+                    r.append(float(j))
+            m.append(r)
+        data_mat = np.array(m)
+    
+    
 '''
 Special class-Euler Bernoulli beam with elements of equal length, two nodes per
 element. Assists in generating problem data.
@@ -309,8 +324,10 @@ class EulerBernoulliBeam(FEM1DProblemData):
         
     
     def __init__(self, length, num_elements, b=None, c=None, f=None, **kwargs):
+        self.solved = False
         self.length = length
         self.num_elements = num_elements
+        self.num_nodes = num_elements + 1
         self.node_points = [i*length/(num_elements) for i in range(num_elements+1)]
         self.local_node_points = [self.node_points[0]]
         for n in self.node_points[1:-1]:
@@ -327,7 +344,7 @@ class EulerBernoulliBeam(FEM1DProblemData):
         data['ielem'] = 0; data['nem'] = num_elements
         data['nprnt'] = 1
         
-        data['glx'] = [length*num_elements]*num_elements
+        data['glx'] = [length/num_elements]*num_elements
         
         data['ax0'], data['ax1'] = self.linear_gen_array(self.a)
         data['bx0'], data['bx1'] = self.linear_gen_array(self.b)
@@ -353,7 +370,7 @@ class EulerBernoulliBeam(FEM1DProblemData):
             if(loc == 'l'):
                 self.vars['ispv1'].append(1)
             else:    
-                self.vars['ispv1'].append(self.node_points[-1])
+                self.vars['ispv1'].append(self.num_nodes)
             self.vars['ispv2'].append(dof)
             self.vars['vspv'].append(x)
         if(var_type == 'secondary'):
@@ -364,9 +381,56 @@ class EulerBernoulliBeam(FEM1DProblemData):
             if(loc == 'l'):
                 self.vars['issv1'].append(1)
             else:
-                self.vars['issv1'].append(self.node_points[-1])
+                self.vars['issv1'].append(self.num_nodes)
             self.vars['issv2'].append(dof)
             self.vars['vssv'].append(x)
+    
+    def run(self):
+        solution_card = super().run()
+        i = solution_card.index('Shear Force') + 94
+        l = solution_card[i:-110]
+        n = [j.split(' ') for j in l.split('\n')]
+        m = []
+        for k in n:
+            r = []
+            for j in k:
+                if j != '':
+                    r.append(float(j))
+            m.append(r)
+        data_mat = np.array(m)
+        data_mat = np.reshape(data_mat, ())
+        self.x_coord = np.linspace(0, self.length, num=data_mat.shape[0], endpoint=True)
+        self.deflection = data_mat[:,1]
+        self.rotation = data_mat[:,2]
+        self.moment = data_mat[:,3]
+        self.shear_force = data_mat[:,4]
+        self.solved = True
+        return solution_card
+    
+    # functions for primary and secondary variables after system is solved
+    def w(self, x):
+        if(self.solved):
+            return np.interp(x, self.x_coord, self.deflection)
+        else:
+            return 0
+    
+    def theta(self, x):
+        if(self.solved):
+            return np.interp(x, self.x_coord, self.rotation)
+        else:
+            return 0
+    
+    def m(self, x):
+        if(self.solved):
+            return np.interp(x, self.x_coord, self.moment)
+        else:
+            return 0
+    
+    def v(self, x):
+        if(self.solved):
+            return np.interp(x, self.x_coord, self.shear_force)
+        else:
+            return 0
     
     def plot_beam(self):
         xrange = np.arange(0, self.length, 0.01)
