@@ -398,39 +398,51 @@ class EulerBernoulliBeam(FEM1DProblemData):
                     r.append(float(j))
             m.append(r)
         data_mat = np.array(m)
-        data_mat = np.reshape(data_mat, ())
-        self.x_coord = np.linspace(0, self.length, num=data_mat.shape[0], endpoint=True)
-        self.deflection = data_mat[:,1]
-        self.rotation = data_mat[:,2]
-        self.moment = data_mat[:,3]
-        self.shear_force = data_mat[:,4]
+        # data postprocessing
+        x_local = data_mat[:,0]
+        start_indices = [i for i, x in enumerate(x_local) if x == 0] + [x_local.size]
+        local_matrices = [data_mat[start_indices[i]:start_indices[i+1],:] for i in range(len(start_indices[:-1]))]
+        # prepend the global coordinates
+        x = 0
+        self.local_matrices = local_matrices
+        for i, e in enumerate(local_matrices):
+            local_matrices[i] = np.append(x+e[:,0:1], e, axis=1)
+            x += e[-1, 0]
+        global_matrix = local_matrices[0]
+        for e in local_matrices[1:]:
+            global_matrix = np.append(global_matrix, e, axis=0)
+        
+        self.local_matrices = local_matrices
+        self.global_matrix = global_matrix
+        self.x = global_matrix[:,0]
+        self.x_local = global_matrix[:,1]
+        self.w = global_matrix[:,2]
+        self.theta = global_matrix[:,3]
+        self.m = global_matrix[:,4]
+        self.v = global_matrix[:,5]
         self.solved = True
         return solution_card
     
     # functions for primary and secondary variables after system is solved
-    def w(self, x):
+    def displacement(self, x):
         if(self.solved):
-            return np.interp(x, self.x_coord, self.deflection)
-        else:
-            return 0
+            return np.interp(x, self.global_matrices[:,0], self.global_matrices[:,2])
+        return 0
     
-    def theta(self, x):
+    def rotation(self, x):
         if(self.solved):
-            return np.interp(x, self.x_coord, self.rotation)
-        else:
-            return 0
+            return np.interp(x, self.global_matrices[:,0], self.global_matrices[:,3])
+        return 0
     
-    def m(self, x):
+    def moment(self, x):
         if(self.solved):
-            return np.interp(x, self.x_coord, self.moment)
-        else:
-            return 0
+            return np.interp(x, self.global_matrices[:,0], self.global_matrices[:,4])
+        return 0
     
-    def v(self, x):
+    def shear_force(self, x):
         if(self.solved):
-            return np.interp(x, self.x_coord, self.shear_force)
-        else:
-            return 0
+            return np.interp(x, self.global_matrices[:,0], self.global_matrices[:,5])
+        return 0
     
     def plot_beam(self):
         xrange = np.arange(0, self.length, 0.01)

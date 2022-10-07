@@ -21,11 +21,14 @@ beam.add_boundary_condition(0, loc='r', var_type='primary', dof=1)
 beam.add_boundary_condition(0, loc='r', var_type='primary', dof=2)
 #%% solve beam and plot all primary and secondary variables
 beam.run()
-x = beam.x_coord
-w = beam.deflection
-theta = beam.rotation
-m = beam.moment
-v = beam.shear_force
+x = beam.x
+w = beam.w
+theta = beam.theta
+m = beam.m
+v = beam.v 
+# theta = beam.rotation
+# m = beam.moment
+# v = beam.shear_force
 
 plt.figure(figsize=(6.5, 2.5))
 plt.plot(x, w)
@@ -33,3 +36,20 @@ plt.xlabel('distance (m)')
 plt.ylabel('deflection (m)')
 plt.tight_layout()
 
+plt.figure(figsize=(6.5,2.5))
+plt.plot(x, theta)
+plt.xlabel('distance (m)')
+plt.ylabel('rotation')
+plt.tight_layout()
+
+plt.figure(figsize=(6.5,2.5))
+plt.plot(x, m)
+plt.xlabel('distance (m)')
+plt.ylabel('moment (Nm)')
+plt.tight_layout()
+
+plt.figure(figsize=(6.5,2.5))
+plt.plot(x, v)
+plt.xlabel('distance (m)')
+plt.ylabel('shear force (N)')
+plt.tight_layout()
