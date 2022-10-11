@@ -357,31 +357,29 @@ class EulerBernoulliBeam(FEM1DProblemData):
     
     '''
     x: value of the boundary condition
-    loc: 'l' (left) or 'r' (right)
-    var_type: 'primary' or 'secondary'
-    dof: (int) 1 or 2
+    loc: (float) x position of boundary condition (must be a nodal point)
+    var_type: 'w', 'theta', 'm', or 'v'
     '''
-    def add_boundary_condition(self, x, loc='l', var_type='primary', dof=1):
-        if(var_type == 'primary'):
+    def specify_dof(self, x, loc, var_type):
+        node = self.node_points.index(loc) + 1
+        primary = var_type == 'w' or var_type == 'theta'
+        secondary = var_type == 'm' or var_type == 'v'
+        dof = 1 if (var_type == 'w' or var_type == 'v') else 2
+        if(primary):
             if(not 'ispv1' in self.vars):
                 self.vars['ispv1'] = []
                 self.vars['ispv2'] = []
                 self.vars['vspv'] = []
-            if(loc == 'l'):
-                self.vars['ispv1'].append(1)
-            else:    
-                self.vars['ispv1'].append(self.num_nodes)
+            self.vars['ispv1'].append(node)
             self.vars['ispv2'].append(dof)
             self.vars['vspv'].append(x)
-        if(var_type == 'secondary'):
+        if(secondary):
+            print(x)
             if(not 'issv1' in self.vars):
                 self.vars['issv1'] = []
                 self.vars['issv2'] = []
                 self.vars['vssv'] = []
-            if(loc == 'l'):
-                self.vars['issv1'].append(1)
-            else:
-                self.vars['issv1'].append(self.num_nodes)
+            self.vars['issv1'].append(node)
             self.vars['issv2'].append(dof)
             self.vars['vssv'].append(x)
     

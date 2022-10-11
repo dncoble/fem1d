@@ -15,10 +15,12 @@ def f(x):
 EI = 3000000
 b = lambda x: EI
 beam = EulerBernoulliBeam(6, 6, f=f, b=b, title='Euler Bernoulli Beam, 6 elements')
-beam.add_boundary_condition(0, loc='l', var_type='primary', dof=1) # must be 4 boundary conditions
-beam.add_boundary_condition(0, loc='l', var_type='primary', dof=2)
-beam.add_boundary_condition(0, loc='r', var_type='primary', dof=1)
-beam.add_boundary_condition(0, loc='r', var_type='primary', dof=2)
+beam.specify_dof(0, 0, 'w') # deflection left boundary condition
+beam.specify_dof(0, 0, 'm') # moment left boundary condition
+beam.specify_dof(0, 2, 'w')
+beam.specify_dof(0, 4, 'w')
+beam.specify_dof(0, 6, 'w') # deflection right boundary condition
+beam.specify_dof(-2000, 6, 'm') # moment right boundary condition
 #%% solve beam and plot all primary and secondary variables
 beam.run()
 x = beam.x
@@ -29,7 +31,7 @@ v = beam.v
 # theta = beam.rotation
 # m = beam.moment
 # v = beam.shear_force
-
+plt.close('all');
 plt.figure(figsize=(6.5, 2.5))
 plt.plot(x, w)
 plt.xlabel('distance (m)')
