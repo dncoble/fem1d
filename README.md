@@ -13,7 +13,7 @@ solution = fea_mesh.run() # to run the problem and get the output card as a stri
 Names and descriptions of the required problem data are given in the table below. Some data is generated automatically when the information is redundant.
 
 ### EulerBernoulliBeam
-For Euler-Bernoulli beam steady-state deflection problems, `EulerBernoulliBeam` implements `FEM1DProblemData` with a higher level interface. Pass `a`, `b`, `c`, and `f` as functions, and as long as they are piecewise linear breaking at node points, the code will calculate the problem data. Add boundary constraints or other DOF constraints with the method `specify_dof()`.
+For Euler-Bernoulli beam steady-state deflection problems, `EulerBernoulliBeam` implements `FEM1DProblemData` with a higher level interface. Pass `a`, `b`, `c`, and `f` as functions, and as long as they are piecewise linear breaking at node points, the code will calculate the problem data. Add boundary constraints or other DOF constraints with the method `specify_dof(x, loc, var_type)`.
 
 ```
 def f(x): # example loading
