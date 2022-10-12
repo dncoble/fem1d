@@ -10,8 +10,7 @@ fea_mesh = FEM1DProblemData(nodes_per_element, **problem_data)
 fea_mesh.save_card('example.inp') # to produce the data card file
 solution = fea_mesh.run() # to run the problem and get the output card as a string
 ```
-Names and descriptions of the required problem data are given in the table below. Some data is generated automatically
-
+Names and descriptions of the required problem data are given in the table below. Some data is generated automatically when the information is redundant.
 
 ### EulerBernoulliBeam
 For Euler-Bernoulli beam problems, `EulerBernoulliBeam` implements `FEM1DProblemData` .
