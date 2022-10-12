@@ -33,6 +33,8 @@ beam.specify_dof(0, 2, 'w')
 beam.specify_dof(0, 4, 'w')
 beam.specify_dof(0, 6, 'w') # deflection right boundary condition
 beam.specify_dof(-2000, 6, 'm') # moment right boundary condition
+
+beam.run()
 ```
 
 ## License
