@@ -1,77 +1,76 @@
+Variables follow same names as given in the [FEM1D Input Description](https://highered.mheducation.com/sites/dl/free/0072466855/225647/InputdescrFEM1D.pdf). Not all data is relevant to every problem, and only relevant data must be included.
+
 | Name | Type | Card | Notes |
 |------|------|------|-------|
-| title | string | 1 | |
-| model | int | 2 | |
-| ntype | int | 2 | |
-| item | int | 2 | |
-| ielem | | 3 | |
-| nem | | 3 | generated automatically |
-| icont | | 4 | generated automatically, always 0 |
-| nprnt | | 4 | |
-| nnm | | 10 | generated automatically |
-| nod | | 11 | generated automatically
-| glx | | 11 | |
-| ax0 | | 12 | |
-| ax1 | | 12 | |
-| bx0 | | 13 | |
-| bx1 | | 13 | |
-| cx0 | | 14 | |
-| cx1 | | 14 | |
-| fx0 | | 15 | |
-| fx1 | | 15 | |
-| fx2 | | 15 | |
-| nnm | | 16 | |
-| pr | | 17 | |
-| se | | 17 | |
-| sl | | 17 | |
-| sa | | 17 | |
-| si | | 17 | |
-| cs | | 17 | |
-| sn | | 17 | |
-| hf | | 18 | |
-| vf | | 18 | |
-| pf | | 18 | |
-| xb | | 18 | |
-| cnt | | 18 | |
-| snt | | 18 | |
-| nod | | 19 | generated automatically |
-| se | | 20 | |
-| sl | | 20 | |
-| sa | | 20 | |
-| cs | | 20 | |
-| sn | | 20 | |
-| hf | | 20 | |
-| nod | | 21 | generated automatically |
-| ncon | | 22 | generated automatically |
-| icon | | 23 | |
-| vcon | | 23 | |
-| nspv | | 24 | generated automatically |
-| ispv1 | | 25 | |
-| ispv2 | | 25 | |
-| vspv | | 25 | |
-| nssv | | 26 | generated automatically |
-| issv1 | | 27 | |
-| issv2 | | 27 | |
-| vssv | | 27 | |
-| nnbc | | 28 | | generated automatically |
-| inbc1 | | 29 | |
-| inbc2 | | 29 | |
-| vnbc | | 29 | |
-| uref | | 29 | |
-| nmpc | | 30 | generated automatically |
-| imc11 | | 31 | |
-| imc12 | | 31 | |
-| imc21 | | 31 | |
-| imc22 | | 31 | |
-| vmpc | | 31 | |
-| vmpc4 | | 31 | |
-| ct0 | | 32 | |
-| ct1 | | 33 | |
-| dt | | 33 | |
-| alfa | | 33 | |
-| gama | | 33 | |
-| incond | | 34 | |
-| ntime | | 34 | |
-| intvl | | 34 | |
-| guo | | 35 | |
-| gui | | 36 | |
+| `title` | string | 1 | has default value |
+| `model` | int | 2 | one of 1, 2, 3, 4 |
+| `ntype` | int | 2 | one of 0, 1, 2, or 3|
+| `item` | int | 2 | one of 0, 1, 2, or 3|
+| `ielem` | int | 3 | one of 0, 1, or 2|
+| `nem` | int | 3 | generated automatically |
+| `icont` | 0 | 4 | generated automatically, always 0 |
+| `nprnt` | int | 4 | has default value |
+| `nnm` | int | 10, 16 | generated automatically |
+| `nod` | list of list of int | 11, 19, 21 | generated automatically |
+| `glx` | list of float | 11 | |
+| `ax0` | list of float | 12 | |
+| `ax1` | list of float | 12 | |
+| `bx0` | list of float | 13 | |
+| `bx1` | list of float | 13 | |
+| `cx0` | list of float | 14 | |
+| `cx1` | list of float | 14 | |
+| `fx0` | list of float | 15 | |
+| `fx1` | list of float | 15 | |
+| `fx2` | list of float | 15 | |
+| `pr` | list of float | 17 | |
+| `se` | list of float | 17 | |
+| `sl` | list of float | 17 | |
+| `sa` | list of float | 17 | |
+| `si` | list of float | 17 | |
+| `cs` | list of float | 17 | |
+| `sn` | list of float | 17 | |
+| `hf` | list of float | 18 | |
+| `vf` | list of float | 18 | |
+| `pf` | list of float | 18 | |
+| `xb` | list of float | 18 | |
+| `cnt` | list of float | 18 | |
+| `snt` | list of float | 18 | |
+| `se` | list of float | 20 | |
+| `sl` | list of float | 20 | |
+| `sa` | list of float | 20 | |
+| `cs` | list of float | 20 | |
+| `sn` | list of float | 20 | |
+| `hf` | list of float | 20 | |
+| `ncon` | int | 22 | generated automatically |
+| `icon` | list of int | 23 | default empty list |
+| `vcon` | list of float | 23 | default empty list |
+| `nspv` | int | 24 | generated automatically |
+| `ispv1` | list of int | 25 | default empty list |
+| `ispv2` | list of int | 25 | default empty list |
+| `vspv` | list of float | 25 | default empty list |
+| `nssv` | int | 26 | generated automatically |
+| `issv1` | list of int | 27 | default empty list |
+| `issv2` | list of int | 27 | default empty list |
+| `vssv` | list of float | 27 | default empty list |
+| `nnbc` | int | 28 | generated automatically |
+| `inbc1` | list of int | 29 | default empty list |
+| `inbc2` | list of int | 29 | default empty list |
+| `vnbc` | list of float | 29 | default empty list |
+| `uref` | list of float | 29 | default empty list |
+| `nmpc` | int | 30 | generated automatically |
+| `imc11` | list of int | 31 | default empty list |
+| `imc12` | list of int | 31 | default empty list |
+| `imc21` | list of int | 31 | default empty list |
+| `imc22` | list of int | 31 | default empty list |
+| `vmpc` | list of float | 31 | default empty list |
+| `vmpc4` | list of float | 31 | default empty list |
+| `ct0` | float | 32 | |
+| `ct1` | float | 33 | |
+| `dt` | float | 33 | |
+| `alfa` | float | 33 | |
+| `gama` | float | 33 | |
+| `incond` | int | 34 | one of 0 or 1|
+| `ntime` | int | 34 | |
+| `intvl` | int | 34 | |
+| `guo` | list of float | 35 | |
+| `gui` | list of float | 36 | |
