@@ -13,7 +13,28 @@ solution = fea_mesh.run() # to run the problem and get the output card as a stri
 Names and descriptions of the required problem data are given in the table below. Some data is generated automatically when the information is redundant.
 
 ### EulerBernoulliBeam
-For Euler-Bernoulli beam problems, `EulerBernoulliBeam` implements `FEM1DProblemData` .
+For Euler-Bernoulli beam steady-state deflection problems, `EulerBernoulliBeam` implements `FEM1DProblemData` with a higher level interface. Pass `a`, `b`, `c`, and `f` as functions, and as long as they are piecewise linear breaking at node points, the code will calculate the problem data. Add boundary constraints or other DOF constraints with the method `specify_dof()`.
+
+```
+def f(x): # example loading
+    if(x >=0 and x <= 1):
+        return 8000 - 8000*x
+    if(x>= 2 and x<= 4):
+        return 8000
+    return 0
+
+EI = 3000000
+b = lambda x: EI
+
+beam = EulerBernoulliBeam(6, 6, f=f, b=b, title='Euler Bernoulli Beam, 6 elements')
+beam.specify_dof(0, 0, 'w') # deflection left boundary condition
+beam.specify_dof(0, 0, 'm') # moment left boundary condition
+beam.specify_dof(0, 2, 'w')
+beam.specify_dof(0, 4, 'w')
+beam.specify_dof(0, 6, 'w') # deflection right boundary condition
+beam.specify_dof(-2000, 6, 'm') # moment right boundary condition
+```
+
 ## License
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
