@@ -6,14 +6,16 @@ import matplotlib.pyplot as plt
 from time import sleep
 from fem1d import EulerBernoulliBeam
 #%% define beam
-def f(x):
+def f(x): # example loading
     if(x >=0 and x <= 1):
         return 8000 - 8000*x
     if(x>= 2 and x<= 4):
         return 8000
     return 0
+
 EI = 3000000
 b = lambda x: EI
+
 beam = EulerBernoulliBeam(6, 6, f=f, b=b, title='Euler Bernoulli Beam, 6 elements')
 beam.specify_dof(0, 0, 'w') # deflection left boundary condition
 beam.specify_dof(0, 0, 'm') # moment left boundary condition
