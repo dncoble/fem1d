@@ -282,10 +282,9 @@ class EulerBernoulliBeam(FEM1DProblemData):
     def linear_gen_array(self, g):
         g0 = [] # intercepts
         g1 = [] # slopes
-        dx = self.length/self.num_elements
-        for i in range(self.num_elements):
-            x0 = (i + .25)*dx
-            x1 = (i + .75)*dx
+        for x, dx in zip(self.node_points[:-1], self.glx):
+            x0 = x + .25*dx
+            x1 = x + .75*dx
             gx0 = g(x0)
             gx1 = g(x1)
             s = (gx1-gx0)/(.5*dx) # slope
@@ -295,11 +294,13 @@ class EulerBernoulliBeam(FEM1DProblemData):
         return g0, g1
         
     
-    def __init__(self, length, num_elements, b=None, c=None, f=None, glx=None, **kwargs):
+    def __init__(self, length, num_elements, b=None, c=None, f=None, glx=None, 
+                 print_sol=True, **kwargs):
         self.solved = False
         self.length = length
         self.num_elements = num_elements
         self.num_nodes = num_elements + 1
+        self.glx = [length/num_elements]*num_elements if glx == None else glx
         if(glx == None): # nodes of equal length    
             self.node_points = [i*length/(num_elements) for i in range(num_elements+1)]
         else:
@@ -320,7 +321,7 @@ class EulerBernoulliBeam(FEM1DProblemData):
         data['ielem'] = 0; data['nem'] = num_elements
         data['nprnt'] = 1
         
-        data['glx'] = [length/num_elements]*num_elements if glx == None else glx
+        data['glx'] = self.glx
         
         data['ax0'], data['ax1'] = self.linear_gen_array(self.a)
         data['bx0'], data['bx1'] = self.linear_gen_array(self.b)
@@ -329,7 +330,7 @@ class EulerBernoulliBeam(FEM1DProblemData):
         data['fx2'] = [0]*num_elements
         
         nodes_per_element=[2]*num_elements
-        super().__init__(nodes_per_element, **data)
+        super().__init__(nodes_per_element, print_sol=print_sol, **data)
     
     '''
     x: value of the boundary condition
