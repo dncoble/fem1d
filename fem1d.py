@@ -246,26 +246,6 @@ class FEM1DProblemData():
         os.remove('tempcard.inp')
         os.remove('solved_card.txt')
         return solution_card
-
-'''
-Contains solution data and supports certain postprocessing operations
-'''
-class FEMSolution:
-    
-    def __init__(self, solution_card):
-        self.solution_card = solution_card
-        i = solution_card.index('Shear Force') + 94
-        l = np.fromstring(solution_card[i:-110])
-        n = [j.split(' ') for j in l.split('\n')]
-        m = []
-        for k in n:
-            r = []
-            for j in k:
-                if j != '':
-                    r.append(float(j))
-            m.append(r)
-        data_mat = np.array(m)
-    
     
 '''
 Special class-Euler Bernoulli beam with elements of equal length, two nodes per
